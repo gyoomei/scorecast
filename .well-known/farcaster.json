@@ -4,15 +4,15 @@
   "short_name": "ScoreCast",
   "slug": "scorecast",
   "version": "1.0.0",
-  "homeUrl": "https://scorecast.example.com/",
-  "startUrl": "https://scorecast.example.com/",
+  "homeUrl": "https://scorecast-beryl.vercel.app/",
+  "startUrl": "https://scorecast-beryl.vercel.app/",
   "description": "Instantly check your FID & Neynar score.",
   "categories": ["utilities", "social"],
   "tags": ["fid", "neynar", "score", "farcaster", "identity"],
   "icons": {
-    "128": "https://scorecast.example.com/assets/icon-128.png",
-    "192": "https://scorecast.example.com/assets/icon-192.png",
-    "512": "https://scorecast.example.com/assets/icon-512.png"
+    "128": "https://scorecast-beryl.vercel.app/assets/icon-128.png",
+    "192": "https://scorecast-beryl.vercel.app/assets/icon-192.png",
+    "512": "https://scorecast-beryl.vercel.app/assets/icon-512.png"
   },
   "icons_maskable": true,
   "capabilities": ["auth", "wallet", "share", "notifications"],
@@ -22,8 +22,8 @@
   "background_color": "#6F47FF",
   "theme_color": "#6F47FF",
   "developer": {
-    "name": "Your Name",
-    "url": "https://example.com",
+    "name": "Ilyas",
+    "url": "https://scorecast-beryl.vercel.app/",
     "email": "you@example.com"
   }
 }
