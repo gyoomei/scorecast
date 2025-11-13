@@ -3,35 +3,33 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>FID Checker — Mini App</title>
+  <title>FID Checker — Mini App (debug)</title>
 
-  <!-- MINI APP META (required) -->
   <meta name="fc:miniapp" content='{"homeURL":"https://fidchecker.pages.dev/","icon":"https://fidchecker.pages.dev/assets/icon-1024.png"}' />
   <meta property="og:title" content="FID Checker" />
   <meta property="og:description" content="Automatically displays your Farcaster FID and profile photo." />
   <meta property="og:image" content="https://fidchecker.pages.dev/assets/icon-1024.png" />
   <meta name="theme-color" content="#6F42C1" />
-  <meta name="twitter:card" content="summary_large_image" />
 
   <style>
     :root{--bg:#6F42C1;--card:rgba(255,255,255,0.06);--accent:#fff}
     *{box-sizing:border-box}
     html,body{height:100%;margin:0;font-family:Inter,system-ui,Roboto,Arial;color:var(--accent);background:var(--bg)}
     .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-    .card{width:100%;max-width:460px;background:var(--card);border-radius:16px;padding:26px;text-align:center;backdrop-filter:blur(6px);box-shadow:0 18px 40px rgba(0,0,0,0.25)}
+    .card{width:100%;max-width:460px;background:var(--card);border-radius:16px;padding:20px;text-align:center;backdrop-filter:blur(6px);box-shadow:0 18px 40px rgba(0,0,0,0.25)}
     .badge{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#7f56f4,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff;margin:0 auto 8px}
     h1{font-size:18px;margin:0}
     p.sub{margin:6px 0 14px;color:rgba(255,255,255,0.95);font-size:13px}
     .avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.12);background:#eee;margin:8px auto}
-    .fid-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:16px}
-    .fid-box{font-family:ui-monospace,Menlo,monospace;background:rgba(255,255,255,0.06);padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);min-width:170px;text-align:center;font-weight:700}
+    .fid-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px}
+    .fid-box{font-family:ui-monospace,Menlo,monospace;background:rgba(255,255,255,0.06);padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);min-width:140px;text-align:center;font-weight:700}
     .btn{background:#fff;color:var(--bg);padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
-    .status{margin-top:14px;font-size:13px;color:rgba(255,255,255,0.9)}
-    .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,0.12);border-top-color:#fff;animation:spin 1s linear infinite;margin:14px auto}
+    .status{margin-top:10px;font-size:13px;color:rgba(255,255,255,0.95)}
+    .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,0.12);border-top-color:#fff;animation:spin 1s linear infinite;margin:10px auto}
     @keyframes spin{to{transform:rotate(360deg)}}
-    .signin{margin-top:12px}
-    .error{margin-top:10px;background:rgba(255,255,255,0.08);padding:8px;border-radius:8px;color:#fff;font-size:13px;display:none}
-    @media(max-width:420px){.avatar{width:96px;height:96px}.fid-box{min-width:120px}}
+    .debug{margin-top:12px;text-align:left;background:rgba(0,0,0,0.08);padding:8px;border-radius:8px;font-size:12px;max-height:160px;overflow:auto}
+    .hidden{display:none}
+    .sign-area{margin-top:10px}
   </style>
 </head>
 <body>
@@ -48,154 +46,213 @@
         <button id="copyBtn" class="btn" aria-label="Copy FID">Copy</button>
       </div>
 
-      <div id="status" class="status">Detecting your Farcaster profile…</div>
-      <div id="spinner" class="spinner" aria-hidden="true"></div>
+      <div id="status" class="status">Initializing…</div>
+      <div id="spinner" class="spinner"></div>
 
-      <div class="signin" id="signinContainer" style="display:none">
-        <button id="signBtn" class="btn">Sign in</button>
+      <div class="sign-area" id="signArea" style="display:none">
+        <button id="signBtn" class="btn">Sign in (interactive)</button>
       </div>
 
-      <div id="error" class="error"></div>
+      <div class="debug" id="debug">debug log will appear here</div>
     </section>
   </main>
 
   <script type="module">
+    // debug helpers
+    const dbg = (m) => {
+      console.log('[miniapp]', m);
+      const el = document.getElementById('debug');
+      el.textContent = (el.textContent ? el.textContent + '\n' : '') + (typeof m === 'string' ? m : JSON.stringify(m));
+      el.scrollTop = el.scrollHeight;
+    };
+
     const avatarEl = document.getElementById('avatar');
     const fidEl = document.getElementById('fid');
     const statusEl = document.getElementById('status');
     const spinner = document.getElementById('spinner');
-    const errorEl = document.getElementById('error');
     const copyBtn = document.getElementById('copyBtn');
     const signBtn = document.getElementById('signBtn');
-    const signinContainer = document.getElementById('signinContainer');
-
-    function showSpinner(){ spinner.style.display = 'block'; }
-    function hideSpinner(){ spinner.style.display = 'none'; }
-    function showError(msg){ errorEl.style.display = 'block'; errorEl.textContent = msg; hideSpinner(); }
-    function clearError(){ errorEl.style.display = 'none'; errorEl.textContent = ''; }
+    const signArea = document.getElementById('signArea');
 
     function setUser(fid, avatar){
       fidEl.textContent = fid ?? 'unknown';
       avatarEl.src = avatar ?? '/assets/default-avatar.png';
       copyBtn.onclick = async () => {
-        try { await navigator.clipboard.writeText(fid); copyBtn.textContent = 'Copied'; setTimeout(()=> copyBtn.textContent = 'Copy',1200); } catch(e){ console.warn(e) }
-      };
+        try { await navigator.clipboard.writeText(fid); copyBtn.textContent='Copied'; setTimeout(()=>copyBtn.textContent='Copy',1200); } catch(e){ dbg('clipboard failed: ' + e) }
+      }
     }
 
-    const SDK_CDN = 'https://esm.sh/@farcaster/miniapp-sdk';
+    function showStatus(t){ statusEl.textContent = t; dbg('status: '+t) }
+    function showSpinner(){ spinner.style.display = 'block' }
+    function hideSpinner(){ spinner.style.display = 'none' }
 
-    async function tryGetUserThroughSDK(sdk){
-      // try multiple possible SDK methods to fetch viewer/user (robust across versions)
-      const tryFns = [
-        async () => sdk.auth && sdk.auth.getCurrentUser && await sdk.auth.getCurrentUser(),
-        async () => sdk.auth && sdk.auth.getViewer && await sdk.auth.getViewer(),
-        async () => sdk.viewer && sdk.viewer.getCurrentUser && await sdk.viewer.getCurrentUser(),
-        async () => sdk.viewer && sdk.viewer.getViewer && await sdk.viewer.getViewer()
-      ];
+    // multiple SDK CDN options
+    const SDK_CDNS = [
+      'https://esm.sh/@farcaster/miniapp-sdk',
+      'https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk/dist/miniapp-sdk.esm.js'
+    ];
 
-      for(const fn of tryFns){
+    async function tryImportSDK(){
+      for(const url of SDK_CDNS){
         try{
-          const u = await fn();
-          if(u) return u;
+          dbg('importing SDK from ' + url);
+          const mod = await import(url);
+          const sdk = mod.sdk ?? mod.default ?? mod;
+          dbg('import ok from ' + url);
+          return sdk;
         }catch(e){
-          // ignore and try next
+          dbg('import failed from ' + url + ' — ' + (e && e.message ? e.message : String(e)));
         }
       }
       return null;
     }
 
-    async function init(){
-      showSpinner();
-      const isPreview = new URLSearchParams(location.search).get('preview') === 'true';
-      let sdk = null;
-
+    // fallback: try public viewer endpoint (works if opened inside warpcast webview with cookies)
+    async function tryFetchViewerViaAPI(){
       try{
-        const mod = await import(SDK_CDN);
-        sdk = mod.sdk ?? mod.default ?? mod;
+        dbg('trying api.warpcast.com/v2/viewer fallback (credentials include)');
+        const res = await fetch('https://api.warpcast.com/v2/viewer', { credentials: 'include' });
+        dbg('viewer api status: ' + res.status);
+        if(res.ok){
+          const j = await res.json();
+          dbg('viewer api body: ' + JSON.stringify(j));
+          // shape may differ; try common paths
+          const v = j.result?.viewer ?? j.viewer ?? j;
+          return v;
+        }
       }catch(e){
-        console.info('SDK import failed (preview mode):', e);
+        dbg('viewer api failed: ' + e);
+      }
+      return null;
+    }
+
+    async function tryGetUserFromSDK(sdk){
+      const attempts = [
+        async () => sdk.auth && sdk.auth.getCurrentUser && await sdk.auth.getCurrentUser(),
+        async () => sdk.auth && sdk.auth.getViewer && await sdk.auth.getViewer(),
+        async () => sdk.viewer && sdk.viewer.getCurrentUser && await sdk.viewer.getCurrentUser(),
+        async () => sdk.viewer && sdk.viewer.getViewer && await sdk.viewer.getViewer(),
+        async () => sdk.getViewer && await sdk.getViewer()
+      ];
+      for(const fn of attempts){
+        try{
+          const u = await fn();
+          if(u){ dbg('sdk returned user via fn'); return u; }
+        }catch(e){ dbg('attempt fn failed: ' + (e && e.message ? e.message : String(e))); }
+      }
+      return null;
+    }
+
+    async function init(){
+      showStatus('Starting');
+      showSpinner();
+
+      const urlParams = new URLSearchParams(location.search);
+      const forcePreview = urlParams.get('preview') === 'true' || urlParams.get('miniapp') === 'true';
+
+      dbg('forcePreview=' + forcePreview);
+
+      // 1) import SDK (try multiple URLs)
+      const sdk = await tryImportSDK();
+
+      if(!sdk){
+        dbg('SDK not available');
+      } else {
+        dbg('SDK available: ' + (sdk && sdk.version ? sdk.version : 'unknown version'));
       }
 
-      // if no sdk or preview -> demo fallback
-      if(!sdk || isPreview){
+      // 2) try get user from SDK
+      let user = null;
+      if(sdk){
+        user = await tryGetUserFromSDK(sdk);
+        dbg('user from SDK: ' + (user ? JSON.stringify(user) : 'null'));
+      }
+
+      // 3) fallback to API fetch (useful in some webviews)
+      if(!user){
+        const apiUser = await tryFetchViewerViaAPI();
+        if(apiUser){
+          dbg('user from api fallback: ' + JSON.stringify(apiUser));
+          user = apiUser;
+        }
+      }
+
+      // 4) If still no user and we're forced preview or no SDK -> preview demo
+      if(!user && (forcePreview || !sdk)){
         hideSpinner();
-        statusEl.textContent = 'Preview mode';
+        showStatus('Preview — SDK not present or not in Warpcast mobile');
         setUser('241470','/assets/default-avatar.png');
         return;
       }
 
-      clearError();
-
-      // try to get user silently
-      let user = null;
-      try {
-        user = await tryGetUserThroughSDK(sdk);
-      } catch(e){
-        console.warn('silent fetch user failed', e);
-      }
-
-      // try silent login if no user
-      if(!user && sdk.auth && typeof sdk.auth.login === 'function'){
-        try{
-          user = await sdk.auth.login({ prompt: false }).catch(()=>null);
-        }catch(e){}
-      }
-
-      // If still no user, show Sign in button (requires user gesture)
-      if(!user){
+      // 5) no user but SDK present -> show sign-in interactive if possible
+      if(!user && sdk){
         hideSpinner();
-        statusEl.textContent = 'Not signed in — open in Farcaster to sign in';
-        signinContainer.style.display = 'block';
-        signBtn.onclick = async () => {
-          try{
-            signinContainer.style.display = 'none';
-            showSpinner();
-            // call interactive login
-            if(sdk.auth && typeof sdk.auth.login === 'function'){
+        showStatus('Not signed in — interactive sign-in may be required');
+        // if interactive login supported
+        if(sdk.auth && typeof sdk.auth.login === 'function'){
+          dbg('auth.login available -> show sign button');
+          signArea.style.display = 'block';
+          signBtn.onclick = async () => {
+            try{
+              signArea.style.display = 'none';
+              showSpinner();
+              showStatus('Waiting for interactive sign-in...');
               const u = await sdk.auth.login({ prompt: true });
-              user = u;
-            } else {
-              throw new Error('Auth.login not available on SDK');
-            }
-            if(user){
-              // set UI
-              const fid = user?.fid ?? user?.userId ?? user?.id ?? 'unknown';
-              const avatar = user?.profile?.picture ?? user?.avatar ?? '/assets/default-avatar.png';
-              setUser(fid, avatar);
-              statusEl.textContent = 'Signed in';
-            } else {
-              statusEl.textContent = 'Sign in cancelled';
-            }
-            // call ready so host hides splash
-            if(sdk.actions && typeof sdk.actions.ready === 'function'){
-              try{ await sdk.actions.ready(); } catch(e){ console.warn('ready failed',e); }
-            }
-            hideSpinner();
-          }catch(err){
-            console.error(err);
-            showError('Sign in failed: ' + (err?.message||String(err)));
-          }
-        };
+              dbg('interactive login returned: ' + JSON.stringify(u));
+              if(u){
+                const fid = u?.fid ?? u?.userId ?? u?.id ?? 'unknown';
+                const avatar = u?.profile?.picture ?? u?.avatar ?? '/assets/default-avatar.png';
+                setUser(fid, avatar);
+                showStatus('Signed in');
+                // call ready if available
+                if(sdk.actions && typeof sdk.actions.ready === 'function'){
+                  try{ await sdk.actions.ready(); dbg('called sdk.actions.ready() after sign in'); } catch(e){ dbg('ready() after sign-in failed: '+e) }
+                }
+              } else {
+                showStatus('Sign in cancelled');
+              }
+            }catch(err){
+              dbg('interactive login error: ' + err);
+              showError('Sign in failed: ' + (err?.message||String(err)));
+            } finally { hideSpinner(); }
+          };
+        } else {
+          dbg('auth.login not available on SDK — cannot show interactive sign-in here');
+          showStatus('Auth.login not available — open in Warpcast mobile to sign in');
+        }
         return;
       }
 
-      // user exists — show info
+      // 6) success: we have a user
       try{
-        const fid = user?.fid ?? user?.userId ?? user?.id ?? 'unknown';
-        const avatar = user?.profile?.picture ?? user?.avatar ?? '/assets/default-avatar.png';
-        setUser(fid, avatar);
-        statusEl.textContent = 'Signed in';
+        const fid = user?.fid ?? user?.userId ?? user?.id ?? (user?.result?.viewer?.fid) ?? 'unknown';
+        // avatar paths differ across SDK shapes; try common keys
+        const avatar = user?.profile?.picture ?? user?.profile?.pfp?.url ?? user?.avatar ?? user?.image ?? '/assets/default-avatar.png';
 
-        // call ready so host hides splash
-        if(sdk.actions && typeof sdk.actions.ready === 'function'){
-          try{ await sdk.actions.ready(); console.info('sdk.actions.ready() called'); } catch(e){ console.warn('ready failed', e); }
+        setUser(fid, avatar);
+        showStatus('Signed in');
+        // call ready() so host hides splash
+        if(sdk && sdk.actions && typeof sdk.actions.ready === 'function'){
+          try{
+            await sdk.actions.ready();
+            dbg('sdk.actions.ready() called — host should hide splash');
+          }catch(e){ dbg('sdk.actions.ready() failed: ' + e) }
+        } else {
+          dbg('sdk.actions.ready() not available on this host');
         }
       }catch(e){
-        console.error(e);
-        showError('Could not load user: ' + (e?.message||String(e)));
+        dbg('final rendering error: ' + e);
+        showStatus('Error rendering user');
       } finally {
         hideSpinner();
       }
+    }
+
+    // helper show error
+    function showError(msg){
+      const el = document.getElementById('debug');
+      el.textContent += '\nERROR: ' + msg;
     }
 
     window.addEventListener('load', init);
