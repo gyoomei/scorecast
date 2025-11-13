@@ -1,209 +1,132 @@
-<!doctype html>
-<html lang="id">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ScoreCast — Instantly check your FID & Neynar score</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ScoreCast — Check Your FID & Neynar Score</title>
 
-  <!-- Simple styles (purple background + white card) -->
+  <!-- OpenGraph (Preview in Warpcast) -->
+  <meta property="og:title" content="ScoreCast — Check Your FID & Neynar Score" />
+  <meta property="og:description" content="Instantly check your Farcaster identity stats — FID & Neynar score." />
+  <meta property="og:image" content="https://scorecast-beryl.vercel.app/assets/icon-512.png" />
+  <meta property="og:url" content="https://scorecast-beryl.vercel.app" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- Farcaster Mini App tags -->
+  <meta name="fc:frame" content="vNext" />
+  <meta name="fc:frame:button:1" content="Open ScoreCast" />
+  <meta name="fc:frame:button:1:action" content="link" />
+  <meta name="fc:frame:button:1:target" content="https://scorecast-beryl.vercel.app" />
+
   <style>
-    :root {
-      --purple: #6F47FF;
-      --card-bg: rgba(255,255,255,0.92);
-      --muted: #6b7280;
-      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    body {
+      margin: 0;
+      padding: 0;
+      background: #6F47FF;
+      font-family: Arial, sans-serif;
+      color: white;
+      text-align: center;
     }
-    html,body{height:100%;margin:0;}
-    body{
-      background: var(--purple);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:24px;
+
+    .container {
+      padding: 40px 20px;
     }
-    .card{
-      width:100%;
-      max-width:420px;
-      background: var(--card-bg);
-      border-radius:18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-      padding:20px;
-      color:#0f172a;
-    }
-    .header{
-      display:flex;
-      gap:12px;
-      align-items:center;
-      margin-bottom:6px;
-    }
-    .logo {
-      width:56px;height:56px;border-radius:12px;flex:0 0 56px;
-      background:transparent url("./assets/icon-512.png") center/contain no-repeat;
-    }
-    .title {
-      line-height:1;
-    }
-    .appname { font-weight:700; font-size:18px; color: #fff; margin-bottom:2px;}
-    .tagline { font-size:12px; color: #efe9ff;}
-    .profile {
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      align-items:center;
-      margin:14px 0 18px;
-    }
+
     .avatar {
-      width:110px;height:110px;border-radius:999px;object-fit:cover;border:6px solid white;box-shadow:0 6px 20px rgba(0,0,0,0.18);
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid white;
+      background: rgba(255,255,255,0.1);
+      object-fit: cover;
+      margin-bottom: 20px;
     }
-    .name { font-weight:600; margin-top:6px; }
-    .fid-row, .score-row {
-      display:flex; align-items:center; justify-content:space-between;
-      background:#f3f4f6; border-radius:12px; padding:12px; margin:8px 0;
+
+    .box {
+      background: rgba(255,255,255,0.15);
+      padding: 14px 20px;
+      border-radius: 12px;
+      margin: 10px auto;
+      width: 90%;
+      max-width: 400px;
+      font-size: 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .small { font-size:12px; color:var(--muted); }
-    .big { font-size:20px; font-weight:700; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, "Roboto Mono", monospace; font-size:13px; word-break:break-all; }
-    button.copybtn { border-radius:8px; padding:8px 12px; border:1px solid #e6e7ee; background:white; cursor:pointer; }
-    .hint { text-align:center; font-size:12px; color:var(--muted); margin-top:10px; }
-    .center-white {
-      display:flex; align-items:center; gap:10px; background:transparent; padding:10px; border-radius:12px;
+
+    .copy-btn {
+      background: white;
+      color: #6F47FF;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
     }
-    /* small responsive tweaks */
-    @media (max-width:420px){ .card{padding:14px;} .avatar{width:96px;height:96px;} }
+
+    .copy-btn:hover {
+      opacity: 0.85;
+    }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <div style="display:flex; align-items:center; justify-content:space-between;">
-      <div style="display:flex; gap:12px; align-items:center;">
-        <div class="logo" aria-hidden="true"></div>
-        <div style="display:flex;flex-direction:column;">
-          <div class="appname">ScoreCast</div>
-          <div class="tagline">Instantly check your FID & Neynar score.</div>
-        </div>
-      </div>
-      <!-- small branding dot -->
-      <div style="font-size:12px;color:var(--muted);">v1</div>
+  <div class="container">
+    <img id="pfp" class="avatar" src="" alt="Profile" />
+    
+    <div class="box">
+      <span id="fid">FID: ...</span>
+      <button class="copy-btn" onclick="copyText('fid')">Copy</button>
     </div>
 
-    <div class="profile">
-      <img id="avatar" class="avatar" alt="User avatar" src="./assets/icon-128.png" />
-      <div id="name" class="name">Preview User</div>
+    <div class="box">
+      <span id="score">Neynar Score: ...</span>
+      <button class="copy-btn" onclick="copyText('score')">Copy</button>
     </div>
-
-    <div class="fid-row">
-      <div style="flex:1;">
-        <div class="small">Farcaster ID (FID)</div>
-        <div id="fid" class="mono">fid:1234567890</div>
-      </div>
-      <div style="margin-left:12px;">
-        <button id="copyFid" class="copybtn">Salin</button>
-      </div>
-    </div>
-
-    <div class="score-row">
-      <div>
-        <div class="small">Neynar Score</div>
-        <div id="score" class="big">42</div>
-      </div>
-      <div style="text-align:right">
-        <div class="small">Skor 0 - 100</div>
-        <button id="copyScore" class="copybtn" style="margin-top:8px;">Salin</button>
-      </div>
-    </div>
-
-    <div class="hint">Tip: Jika dibuka di Farcaster client, halaman akan menampilkan data profile asli.</div>
   </div>
 
   <script>
-    // ----- Helper: simple deterministic 'neynar score' (0..100) from a string -----
-    function computeNeynarFromString(s) {
-      if (!s) return 0;
-      let h = 2166136261 >>> 0;
-      for (let i = 0; i < s.length; i++) {
-        h ^= s.charCodeAt(i);
-        // mix (small and safe ops)
-        h = (h + ((h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24))) >>> 0;
-      }
-      return Math.floor(h % 101);
-    }
-
-    // ----- Copy utility -----
-    async function copyText(text, btn) {
+    async function loadUser() {
       try {
-        await navigator.clipboard.writeText(text);
-        const prev = btn.textContent;
-        btn.textContent = 'Tersalin';
-        setTimeout(()=> btn.textContent = prev, 1400);
+        const urlParams = new URLSearchParams(window.location.search);
+        const fid = urlParams.get("fid");
+
+        if (!fid) return;
+
+        // Update FID in UI
+        document.getElementById("fid").textContent = "FID: " + fid;
+
+        // Load Profile Data
+        const profileReq = await fetch(`https://api.neynar.com/v2/farcaster/user?fid=${fid}`, {
+          headers: { "api_key": "NEYNAR_ANON_API_KEY" },
+        });
+
+        const profile = await profileReq.json();
+        const pfp = profile?.result?.user?.pfp_url;
+        if (pfp) document.getElementById("pfp").src = pfp;
+
+        // Load Neynar Score
+        const scoreReq = await fetch(`https://api.neynar.com/v2/farcaster/user/score?fid=${fid}`, {
+          headers: { "api_key": "NEYNAR_ANON_API_KEY" },
+        });
+
+        const scoreData = await scoreReq.json();
+        const score = scoreData?.result?.score ?? 0;
+
+        document.getElementById("score").textContent = "Neynar Score: " + score;
       } catch (e) {
-        alert('Gagal salin ke clipboard.');
+        console.error(e);
       }
     }
 
-    // ----- Initialize UI with preview values -----
-    const fidEl = document.getElementById('fid');
-    const scoreEl = document.getElementById('score');
-    const avatarEl = document.getElementById('avatar');
-    const nameEl = document.getElementById('name');
-    const copyFidBtn = document.getElementById('copyFid');
-    const copyScoreBtn = document.getElementById('copyScore');
-
-    // Default preview
-    let current = {
-      fid: 'fid:1234567890',
-      name: 'Preview User',
-      avatar: './assets/icon-128.png'
-    };
-
-    function applyCurrent() {
-      fidEl.textContent = current.fid;
-      nameEl.textContent = current.name;
-      avatarEl.src = current.avatar;
-      scoreEl.textContent = computeNeynarFromString(String(current.fid));
+    function copyText(id) {
+      const text = document.getElementById(id).textContent;
+      navigator.clipboard.writeText(text);
+      alert("Copied!");
     }
 
-    // ----- Try to read Farcaster SDK / viewer info if available (graceful fallback) -----
-    async function tryFarcasterViewer() {
-      try {
-        // Many mini-app SDKs expose a createMiniAppSdk() or window.farcasterMiniApp
-        const maybeSdk = (window.createMiniAppSdk && window.createMiniAppSdk()) ||
-                         window.FarcasterMiniApp ||
-                         window.farcasterMiniApp ||
-                         null;
-
-        if (maybeSdk && maybeSdk.auth && (maybeSdk.auth.getViewer || maybeSdk.auth.requestAuth)) {
-          // different SDKs return viewer/session variably
-          let viewer = null;
-          if (maybeSdk.auth.getViewer) {
-            viewer = await maybeSdk.auth.getViewer();
-          } else if (maybeSdk.auth.requestAuth) {
-            const s = await maybeSdk.auth.requestAuth();
-            viewer = s?.viewer || s?.profile || s;
-          }
-          // normalize common fields
-          const profile = viewer?.profile || viewer || {};
-          const fid = profile.fid || profile.id || profile.userId || String(profile?.address || 'unknown-fid');
-          const avatar = profile.avatarUrl || profile.photo || profile.image || current.avatar;
-          const name = profile.displayName || profile.name || profile.username || current.name;
-
-          current = { fid, avatar, name };
-          applyCurrent();
-          return;
-        }
-      } catch (e) {
-        console.warn('SDK detect failed', e);
-      }
-
-      // fallback preview (use identicon service so avatar looks different)
-      applyCurrent();
-    }
-
-    // wire buttons
-    copyFidBtn.addEventListener('click', ()=> copyText(current.fid, copyFidBtn));
-    copyScoreBtn.addEventListener('click', ()=> copyText(scoreEl.textContent, copyScoreBtn));
-
-    // run
-    tryFarcasterViewer();
+    loadUser();
   </script>
 </body>
 </html>
