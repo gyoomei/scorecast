@@ -1,135 +1,167 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>FID Checker — Mini App</title>
 
-  <title>Farcaster FID Checker</title>
-
-  <!-- MINI APP IDENTIFIER -->
-  <meta name="fc:miniapp" content='{
-    "homeURL": "https://fidchecker.pages.dev/",
-    "icon": "https://fidchecker.pages.dev/assets/icon-192.png"
-  }' />
-
-  <!-- OG TAGS FOR PREVIEW -->
-  <meta property="og:title" content="Farcaster FID Checker" />
+  <!-- MINI APP META (required) -->
+  <meta name="fc:miniapp" content='{"homeURL":"https://fidchecker.pages.dev/","icon":"https://fidchecker.pages.dev/assets/icon-1024.png"}' />
+  <meta property="og:title" content="FID Checker" />
   <meta property="og:description" content="Automatically displays your Farcaster FID and profile photo." />
-  <meta property="og:image" content="https://fidchecker.pages.dev/assets/icon-192.png" />
+  <meta property="og:image" content="https://fidchecker.pages.dev/assets/icon-1024.png" />
   <meta property="og:image:width" content="600" />
   <meta property="og:image:height" content="600" />
-
-  <!-- TWITTER CARD -->
+  <meta name="theme-color" content="#6F42C1" />
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Farcaster FID Checker" />
-  <meta name="twitter:description" content="Instant Farcaster identity viewer." />
-  <meta name="twitter:image" content="https://fidchecker.pages.dev/assets/icon-192.png" />
 
-  <!-- STYLE -->
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-      background: #6F42C1;
-      font-family: "Inter", sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: white;
+    :root{
+      --bg: #6F42C1;
+      --card: rgba(255,255,255,0.06);
+      --muted: rgba(255,255,255,0.85);
+      --accent: #fff;
     }
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,-apple-system,'Segoe UI',Roboto,Arial;color:var(--accent);background:var(--bg);-webkit-font-smoothing:antialiased}
+    .wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+    .card{width:100%;max-width:460px;background:var(--card);border-radius:16px;padding:26px;text-align:center;backdrop-filter:blur(6px);box-shadow:0 18px 40px rgba(0,0,0,0.25)}
+    .brand{display:flex;gap:12px;align-items:center;justify-content:center;margin-bottom:12px}
+    .badge{width:46px;height:46px;border-radius:10px;background:linear-gradient(135deg,#7f56f4,#8b5cf6);display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
+    h1{font-size:18px;margin:0}
+    p.sub{margin:6px 0 18px;color:rgba(255,255,255,0.9);font-size:13px}
 
-    .card {
-      background: rgba(255, 255, 255, 0.1);
-      backdrop-filter: blur(20px);
-      border-radius: 20px;
-      width: 90%;
-      max-width: 420px;
-      padding: 30px;
-      text-align: center;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-    }
-
-    .avatar {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      margin: 15px auto;
-      border: 4px solid rgba(255,255,255,0.5);
-    }
-
-    .fid-box {
-      margin-top: 20px;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      align-items: center;
-    }
-
-    .copy-btn {
-      background: white;
-      color: #6F42C1;
-      padding: 8px 18px;
-      border-radius: 10px;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-    }
-
-    .loading {
-      opacity: 0.7;
-      margin-top: 10px;
-    }
+    .avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.12);background:#eee;margin:8px auto}
+    .fid-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:16px}
+    .fid-box{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:rgba(255,255,255,0.06);padding:8px 14px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);min-width:170px;text-align:center;font-weight:700}
+    .btn{background:#fff;color:var(--bg);padding:8px 12px;border-radius:10px;border:0;font-weight:700;cursor:pointer}
+    .status{margin-top:14px;font-size:13px;color:rgba(255,255,255,0.9)}
+    .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,0.12);border-top-color:#fff;animation:spin 1s linear infinite;margin:14px auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .error{margin-top:10px;background:rgba(255,255,255,0.08);padding:8px;border-radius:8px;color:#fff;font-size:13px}
+    @media(max-width:420px){.avatar{width:96px;height:96px}.fid-box{min-width:120px}}
   </style>
-
 </head>
-
 <body>
-  <div class="card">
-    <h2>Farcaster FID Checker</h2>
-    <p style="opacity: 0.8;">Automatically shows your Farcaster identity</p>
+  <main class="wrap">
+    <section class="card" role="main" aria-labelledby="title">
+      <div class="brand">
+        <div class="badge">FID</div>
+        <div>
+          <h1 id="title">Farcaster FID Checker</h1>
+          <p class="sub">Auto shows your Farcaster FID & profile photo</p>
+        </div>
+      </div>
 
-    <img id="avatar" class="avatar" src="https://fidchecker.pages.dev/assets/default-avatar.png" alt="avatar" />
+      <img id="avatar" class="avatar" src="/assets/default-avatar.png" alt="profile picture" />
 
-    <div class="fid-box">
-      <span id="fid" style="font-size: 20px;">...</span>
-      <button class="copy-btn" onclick="copyFID()">Copy</button>
-    </div>
+      <div class="fid-row" aria-live="polite">
+        <div id="fid" class="fid-box">—</div>
+        <button id="copyBtn" class="btn" aria-label="Copy FID">Copy</button>
+      </div>
 
-    <p id="status" class="loading">Detecting your Farcaster profile...</p>
-  </div>
+      <div id="status" class="status">Detecting your Farcaster profile…</div>
+      <div id="spinner" class="spinner" aria-hidden="true"></div>
+      <div id="error" class="error" style="display:none"></div>
+    </section>
+  </main>
 
-  <script>
-    async function loadViewer() {
+  <script type="module">
+    // FINAL index script — robust and Farcaster-ready
+    const avatarEl = document.getElementById('avatar');
+    const fidEl = document.getElementById('fid');
+    const statusEl = document.getElementById('status');
+    const spinner = document.getElementById('spinner');
+    const errorEl = document.getElementById('error');
+    const copyBtn = document.getElementById('copyBtn');
+
+    function showSpinner(){ spinner.style.display = 'block'; }
+    function hideSpinner(){ spinner.style.display = 'none'; }
+    function showError(msg){ errorEl.style.display = 'block'; errorEl.textContent = msg; hideSpinner(); }
+    function clearError(){ errorEl.style.display = 'none'; errorEl.textContent = ''; }
+
+    function setUser(fid, avatar){
+      fidEl.textContent = fid ?? 'unknown';
+      avatarEl.src = avatar ?? '/assets/default-avatar.png';
+      copyBtn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(fid);
+          copyBtn.textContent = 'Copied';
+          setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
+        } catch(e){
+          console.warn('Clipboard failed', e);
+        }
+      };
+    }
+
+    // Try SDK via ESM CDN (per docs). Use fallback demo for ?preview=true or missing SDK.
+    const SDK_CDN = 'https://esm.sh/@farcaster/miniapp-sdk';
+
+    async function init(){
+      showSpinner();
+      const isPreview = new URLSearchParams(location.search).get('preview') === 'true';
+
+      let sdk = null;
       try {
-        const res = await fetch("https://api.warpcast.com/v2/viewer", { credentials: "include" });
-        const data = await res.json();
+        const mod = await import(SDK_CDN);
+        // ESM package may export default or named sdk
+        sdk = mod.sdk ?? mod.default ?? mod;
+      } catch(e){
+        console.info('SDK import failed or not present (preview mode).', e);
+      }
 
-        if (!data.result || !data.result.viewer) {
-          document.getElementById("status").innerText = "Please open from Farcaster.";
-          return;
+      // If no SDK or preview forced -> demo mode for browser preview
+      if(isPreview || !sdk){
+        hideSpinner();
+        statusEl.textContent = 'Preview mode';
+        setUser('241470', '/assets/default-avatar.png');
+        return;
+      }
+
+      // If SDK present — call ready() when UI is prepared
+      try {
+        // Try to get user via sdk.auth
+        let user = null;
+        if(sdk.auth && typeof sdk.auth.getCurrentUser === 'function'){
+          try { user = await sdk.auth.getCurrentUser(); } catch(e){ /* ignore */ }
         }
 
-        const user = data.result.viewer;
-        const fid = user.fid;
-        const pfp = user.profile?.pfp?.url || "https://fidchecker.pages.dev/assets/default-avatar.png";
+        // If not, attempt silent login
+        if(!user && sdk.auth && typeof sdk.auth.login === 'function'){
+          try { user = await sdk.auth.login({ prompt:false }); } catch(e){ /* might require gesture */ }
+        }
 
-        document.getElementById("avatar").src = pfp;
-        document.getElementById("fid").innerText = fid;
-        document.getElementById("status").innerText = "Profile loaded";
-      } catch (e) {
-        document.getElementById("status").innerText = "Unable to fetch viewer.";
+        // Prepare UI
+        if(user){
+          const fid = user?.fid ?? user?.userId ?? user?.id ?? 'unknown';
+          const avatar = user?.profile?.picture ?? user?.avatar ?? user?.image ?? '/assets/default-avatar.png';
+          setUser(fid, avatar);
+          statusEl.textContent = 'Signed in';
+        } else {
+          statusEl.textContent = 'Not signed in — open in Farcaster to sign in';
+          setUser('—', '/assets/default-avatar.png');
+        }
+
+        // Tell host we're ready (hide splash). This is the critical call.
+        if(sdk.actions && typeof sdk.actions.ready === 'function'){
+          try {
+            await sdk.actions.ready();
+            console.info('sdk.actions.ready() called — host may hide splash');
+          } catch(err){
+            console.warn('sdk.actions.ready() failed', err);
+          }
+        } else {
+          console.info('sdk.actions.ready() not available on this host');
+        }
+
+        hideSpinner();
+      } catch(err){
+        console.error(err);
+        showError('Unexpected error: ' + (err?.message || String(err)));
       }
     }
 
-    function copyFID() {
-      const fid = document.getElementById("fid").innerText;
-      navigator.clipboard.writeText(fid);
-      alert("FID copied!");
-    }
-
-    loadViewer();
+    window.addEventListener('load', init);
   </script>
 </body>
 </html>
