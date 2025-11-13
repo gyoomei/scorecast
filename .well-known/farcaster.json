@@ -21,6 +21,13 @@
   "display": "standalone",
   "background_color": "#6F47FF",
   "theme_color": "#6F47FF",
+
+  "accountAssociation": {
+    "header": "eyJmaWQiOjI0MTQ3MCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDkyQzgyNTIwOTA3YjZDZmU2MUUzNjNmZTBFOWY2QjdjODJmQzdENTkifQ",
+    "payload": "eyJkb21haW4iOiJzY29yZWNhc3QtYmVyeWwudmVyY2VsLmFwcCJ9",
+    "signature": "NdG0M9tmZpAJ2jAQ9WEdviSb07Pfid9OLHQPaAWCwk92LOSDBVazppmpLF769G/7uOAoOvPiCmPOSbpI2+WyTRw="
+  },
+
   "developer": {
     "name": "Ilyas",
     "url": "https://scorecast-beryl.vercel.app/",
