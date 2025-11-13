@@ -5,45 +5,80 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Farcaster FID Checker</title>
 
-  <meta name="fc:miniapp" content='{"homeURL":"https://your-domain.example/","icon":"https://your-domain.example/assets/icon-192.png"}' />
-  <meta property="og:title" content="Farcaster FID Checker" />
-  <meta property="og:description" content="See your Farcaster FID and profile photo instantly." />
+  <meta name="fc:miniapp" content='{"homeURL":"https://scorecast-beryl.vercel.app/","icon":"https://scorecast-beryl.vercel.app/assets/icon-192.png"}'>
+  <meta property="og:title" content="Farcaster FID Checker">
+  <meta property="og:description" content="See your Farcaster FID and profile photo instantly.">
 
   <style>
-    :root{
+    :root {
       --accent-bg: #6F42C1;
       --card-bg: rgba(255,255,255,0.08);
       --text: #ffffff;
       --muted: rgba(255,255,255,0.8);
     }
-    html,body{height:100%;margin:0;font-family:Inter, ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;color:var(--text);} 
-    body{
+    html,body {
+      height:100%;margin:0;
+      font-family:Inter, ui-sans-serif, system-ui;
+      color:var(--text);
+    }
+    body {
       display:flex;align-items:center;justify-content:center;
       background-color:var(--accent-bg);
       padding:24px;
     }
+    .container {
+      width:100%;max-width:420px;
+      background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));
+      border-radius:16px;padding:28px;
+      box-shadow:0 8px 30px rgba(0,0,0,0.35);
+      backdrop-filter: blur(6px);
+    }
+    .header {display:flex;gap:12px;margin-bottom:18px;align-items:center;}
+    .logo img {width:40px;height:40px;border-radius:8px;}
+    .title {font-size:18px;font-weight:600;}
+    .subtitle {font-size:13px;color:var(--muted);margin-top:4px;}
 
-    .container{width:100%;max-width:420px;background:linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));border-radius:16px;padding:28px;box-shadow:0 8px 30px rgba(0,0,0,0.35);backdrop-filter: blur(6px);}
-    .header{display:flex;align-items:center;gap:12px;margin-bottom:18px}
-    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02));display:flex;align-items:center;justify-content:center;font-weight:700}
-    .title{font-size:18px;font-weight:600}
-    .subtitle{font-size:13px;color:var(--muted);margin-top:4px}
-    .card{display:flex;flex-direction:column;align-items:center;padding:20px;border-radius:12px;background:var(--card-bg);}
-    .avatar{width:120px;height:120px;border-radius:50%;object-fit:cover;border:4px solid rgba(255,255,255,0.12);box-shadow:0 6px 18px rgba(0,0,0,0.35);background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));}
-    .fid-row{display:flex;align-items:center;gap:10px;margin-top:16px}
-    .fid-text{font-family:SFMono-Regular,Menlo,Monaco,monospace;background:transparent;padding:6px 10px;border-radius:8px;border:1px dashed rgba(255,255,255,0.06);font-weight:600}
-    .copy-btn{padding:8px 12px;border-radius:10px;border:none;background:rgba(255,255,255,0.08);color:var(--text);cursor:pointer;font-weight:600}
-    .small{font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
-    .error{color:#ffdddd;background:rgba(0,0,0,0.12);padding:8px;border-radius:8px;margin-top:12px;display:none}
-    .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,0.12);border-top-color:rgba(255,255,255,0.9);animation:spin 1s linear infinite;margin:12px auto}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    @media (max-width:480px){.container{padding:18px}.avatar{width:96px;height:96px}}
+    .card {
+      display:flex;flex-direction:column;
+      align-items:center;padding:20px;
+      background:var(--card-bg);
+      border-radius:12px;
+    }
+    .avatar {
+      width:120px;height:120px;border-radius:50%;
+      object-fit:cover;
+      border:4px solid rgba(255,255,255,0.12);
+      box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    }
+    .fid-row {display:flex;gap:10px;margin-top:14px;align-items:center;}
+    .fid-text {
+      font-family:monospace;padding:6px 10px;
+      border:1px dashed rgba(255,255,255,0.12);
+      border-radius:8px;font-weight:600;
+    }
+    .copy-btn {
+      padding:8px 12px;border-radius:10px;
+      border:none;background:rgba(255,255,255,0.08);
+      color:white;font-weight:600;cursor:pointer;
+    }
+    .small {font-size:13px;color:var(--muted);margin-top:12px;}
+    .error {display:none;color:#ffdddd;background:rgba(0,0,0,0.2);padding:8px;border-radius:8px;margin-top:12px;}
+    .spinner {
+      width:36px;height:36px;border-radius:50%;
+      border:4px solid rgba(255,255,255,0.12);
+      border-top-color:white;
+      animation:spin 1s linear infinite; margin:12px auto;
+    }
+    @keyframes spin {to {transform:rotate(360deg);}}
   </style>
 </head>
+
 <body>
-  <div class="container" role="main">
+  <div class="container">
     <div class="header">
-      <div class="logo">F</div>
+      <div class="logo">
+        <img src="assets/icon-192.png" alt="">
+      </div>
       <div>
         <div class="title">Farcaster FID Checker</div>
         <div class="subtitle">Automatically shows your Farcaster FID & profile photo</div>
@@ -51,126 +86,96 @@
     </div>
 
     <div class="card" id="card">
-      <img src="assets/default-avatar.png" alt="avatar" class="avatar" id="avatar">
-      <div class="fid-row" style="margin-top:14px">
+      <img id="avatar" src="assets/default-avatar.png" class="avatar">
+      <div class="fid-row">
         <div class="fid-text" id="fid">—</div>
         <button class="copy-btn" id="copyBtn">Copy</button>
       </div>
       <div class="small" id="status">Detecting your Farcaster profile…</div>
-      <div class="spinner" id="spinner" aria-hidden="true"></div>
-      <div class="error" id="error" role="alert"></div>
+      <div class="spinner" id="spinner"></div>
+      <div class="error" id="error"></div>
     </div>
   </div>
 
-  <script type="module">
-    // Stable, defensive runtime: gracefully handles absence of the Farcaster SDK.
-    const SDK_URL = 'https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk/dist/miniapp-sdk.esm.js';
-    const avatarEl = document.getElementById('avatar');
-    const fidEl = document.getElementById('fid');
-    const statusEl = document.getElementById('status');
-    const spinner = document.getElementById('spinner');
-    const errorEl = document.getElementById('error');
-    const copyBtn = document.getElementById('copyBtn');
+<script type="module">
+const SDK_URL = "https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk/dist/miniapp-sdk.esm.js";
 
-    function hideSpinner(){ if(spinner) spinner.style.display='none'; }
-    function showError(msg){ hideSpinner(); if(errorEl){ errorEl.style.display='block'; errorEl.textContent = msg; } }
+const avatarEl = document.getElementById("avatar");
+const fidEl = document.getElementById("fid");
+const statusEl = document.getElementById("status");
+const spinner = document.getElementById("spinner");
+const errorEl = document.getElementById("error");
+const copyBtn = document.getElementById("copyBtn");
 
-    async function loadSDK(){
-      try{
-        return await import(SDK_URL);
-      }catch(e){
-        // Do not throw — caller will handle absence of SDK
-        console.warn('SDK import failed or unavailable', e);
-        return null;
-      }
+function hideSpinner(){ spinner.style.display = "none"; }
+function showError(msg){
+  hideSpinner();
+  errorEl.style.display="block";
+  errorEl.textContent = msg;
+}
+
+async function loadSDK(){
+  try { return await import(SDK_URL); }
+  catch { return null; }
+}
+
+function setupCopy(fid){
+  copyBtn.onclick = async () => {
+    await navigator.clipboard.writeText(fid);
+    copyBtn.textContent = "Copied";
+    setTimeout(() => copyBtn.textContent = "Copy", 1200);
+  };
+}
+
+function renderUser(user){
+  hideSpinner();
+  const fid = user?.fid ?? user?.id ?? "unknown";
+  const avatar = user?.profile?.picture ?? user?.avatar ?? null;
+
+  fidEl.textContent = fid;
+  if(avatar) avatarEl.src = avatar;
+
+  statusEl.textContent = "You are signed in";
+  setupCopy(fid);
+}
+
+function renderLoginButton(auth){
+  hideSpinner();
+  statusEl.textContent = "Sign in required — tap to sign in";
+  const btn = document.createElement("button");
+  btn.className = "copy-btn";
+  btn.textContent = "Sign in with Farcaster";
+  btn.onclick = async () => {
+    try {
+      const user = await auth.login();
+      renderUser(user);
+    } catch(e){
+      showError("Sign in failed");
     }
+  };
+  document.getElementById("card").appendChild(btn);
+}
 
-    function setupCopy(fidValue){
-      copyBtn.onclick = async ()=>{
-        try{
-          await navigator.clipboard.writeText(String(fidValue));
-          copyBtn.textContent = 'Copied';
-          setTimeout(()=>copyBtn.textContent='Copy',1200);
-        }catch(e){
-          console.warn('Clipboard failed', e);
-          copyBtn.textContent = 'Copy';
-        }
-      };
-    }
+async function start(){
+  const sdk = await loadSDK();
+  if(!sdk) return showError("SDK unavailable — open inside a Farcaster client.");
 
-    function renderUser(user){
-      hideSpinner();
-      statusEl.textContent = 'You are signed in';
-      errorEl.style.display='none';
-      const fid = user?.fid ?? user?.userId ?? user?.id ?? 'unknown';
-      const avatar = user?.profile?.picture ?? user?.image ?? user?.avatar ?? user?.profilePicture ?? null;
-      fidEl.textContent = String(fid);
-      if(avatar) avatarEl.src = avatar;
-      else avatarEl.src = 'assets/default-avatar.png';
-      setupCopy(fid);
-    }
+  sdk.ready?.();
 
-    function renderLoginButton(auth){
-      hideSpinner();
-      statusEl.textContent = 'Sign in required — tap to sign in';
-      const btn = document.createElement('button');
-      btn.textContent = 'Sign in with Farcaster';
-      btn.className = 'copy-btn';
-      btn.style.marginTop = '12px';
-      btn.onclick = async ()=> {
-        try{
-          const user = await auth.login();
-          if(user) renderUser(user);
-        }catch(e){
-          showError('Sign-in failed: ' + (e?.message || String(e)));
-        }
-      };
-      document.getElementById('card').appendChild(btn);
-    }
+  let user = null;
+  try { user = await sdk.auth?.getCurrentUser?.(); } catch{}
+  if(!user) try { user = await sdk.auth?.login?.({prompt:false}); } catch{}
 
-    async function tryDetect(){
-      const sdk = await loadSDK();
-      try{
-        if(!sdk){
-          // No SDK — show friendly message but avoid throwing an error
-          showError('Farcaster Mini App SDK not available. Open this mini app inside a Farcaster client that supports mini apps.');
-          return;
-        }
+  if(user) return renderUser(user);
 
-        if(typeof sdk.ready === 'function'){
-          try{ sdk.ready(); }catch(e){ /* ignore non-critical */ }
-        }
+  const caps = await sdk.detectHostCapabilities?.();
+  if(caps?.auth) return renderLoginButton(sdk.auth);
 
-        let user = null;
-        if(typeof sdk.auth?.getCurrentUser === 'function'){
-          try{ user = await sdk.auth.getCurrentUser(); }catch(e){ /* ignore */ }
-        }
+  showError("No user detected.");
+}
 
-        if(!user && typeof sdk.auth?.login === 'function'){
-          try{ user = await sdk.auth.login({prompt:false}); }catch(e){ /* could require user gesture */ }
-        }
+window.onload = start;
+</script>
 
-        if(!user && typeof sdk.detectHostCapabilities === 'function'){
-          const caps = await sdk.detectHostCapabilities();
-          if(caps?.auth && typeof sdk.auth?.login === 'function'){
-            renderLoginButton(sdk.auth);
-            return;
-          }
-        }
-
-        if(user){
-          renderUser(user);
-        }else{
-          showError('No Farcaster user detected. Please open this mini app inside a Farcaster client and allow authentication.');
-        }
-      }catch(err){
-        console.error(err);
-        showError('Unexpected error: ' + (err?.message || String(err)));
-      }
-    }
-
-    // Start after load
-    window.addEventListener('load', ()=>{ tryDetect(); });
-  </script>
 </body>
 </html>
