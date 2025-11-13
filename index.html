@@ -5,177 +5,271 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Farcaster FID Checker</title>
 
-  <meta name="fc:miniapp" content='{"homeURL":"https://scorecast-beryl.vercel.app/","icon":"https://scorecast-beryl.vercel.app/assets/icon-192.png"}'>
-  <meta property="og:title" content="Farcaster FID Checker">
-  <meta property="og:description" content="See your Farcaster FID and profile photo instantly.">
+  <!-- Mini app hint for Farcaster -->
+  <meta name="fc:miniapp" content='{"homeURL":"https://scorecast-beryl.vercel.app/","icon":"https://scorecast-beryl.vercel.app/assets/icon-192.png"}' />
+  <meta property="og:title" content="Farcaster FID Checker" />
+  <meta property="og:description" content="See your Farcaster FID and profile photo instantly." />
+  <meta name="theme-color" content="#6F42C1" />
 
   <style>
-    :root {
+    :root{
       --accent-bg: #6F42C1;
-      --card-bg: rgba(255,255,255,0.08);
-      --text: #ffffff;
-      --muted: rgba(255,255,255,0.8);
+      --card-bg: rgba(255,255,255,0.06);
+      --muted: rgba(255,255,255,0.85);
+      --white: #ffffff;
     }
-    html,body {
-      height:100%;margin:0;
-      font-family:Inter, ui-sans-serif, system-ui;
-      color:var(--text);
-    }
-    body {
-      display:flex;align-items:center;justify-content:center;
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;color:var(--white);}
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:28px;
       background-color:var(--accent-bg);
-      padding:24px;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
-    .container {
-      width:100%;max-width:420px;
-      background:linear-gradient(135deg,rgba(255,255,255,0.04),rgba(255,255,255,0.02));
-      border-radius:16px;padding:28px;
-      box-shadow:0 8px 30px rgba(0,0,0,0.35);
-      backdrop-filter: blur(6px);
-    }
-    .header {display:flex;gap:12px;margin-bottom:18px;align-items:center;}
-    .logo img {width:40px;height:40px;border-radius:8px;}
-    .title {font-size:18px;font-weight:600;}
-    .subtitle {font-size:13px;color:var(--muted);margin-top:4px;}
 
-    .card {
-      display:flex;flex-direction:column;
-      align-items:center;padding:20px;
-      background:var(--card-bg);
-      border-radius:12px;
+    .wrap{width:100%;max-width:520px}
+    .card{
+      background:linear-gradient(180deg, rgba(0,0,0,0.06), rgba(255,255,255,0.02));
+      border-radius:18px;
+      padding:22px;
+      box-shadow:0 18px 50px rgba(0,0,0,0.38);
+      backdrop-filter: blur(8px);
     }
-    .avatar {
-      width:120px;height:120px;border-radius:50%;
-      object-fit:cover;
-      border:4px solid rgba(255,255,255,0.12);
-      box-shadow:0 6px 18px rgba(0,0,0,0.35);
+    .header{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+    .logo{
+      width:56px;height:56px;border-radius:12px;
+      background:rgba(255,255,255,0.06);display:flex;align-items:center;justify-content:center;
+      box-shadow:0 6px 18px rgba(0,0,0,0.25);
     }
-    .fid-row {display:flex;gap:10px;margin-top:14px;align-items:center;}
-    .fid-text {
-      font-family:monospace;padding:6px 10px;
-      border:1px dashed rgba(255,255,255,0.12);
-      border-radius:8px;font-weight:600;
+    .logo img{width:40px;height:40px;object-fit:cover;border-radius:8px}
+    .title{font-size:18px;font-weight:700}
+    .subtitle{font-size:13px;color:var(--muted);margin-top:4px}
+
+    .content{
+      display:flex;flex-direction:column;align-items:center;padding:18px;border-radius:12px;
+      background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.02));
+      width:100%;
     }
-    .copy-btn {
-      padding:8px 12px;border-radius:10px;
-      border:none;background:rgba(255,255,255,0.08);
-      color:white;font-weight:600;cursor:pointer;
+
+    .avatar{
+      width:120px;height:120px;border-radius:50%;object-fit:cover;
+      border:6px solid rgba(255,255,255,0.06);
+      box-shadow:0 10px 30px rgba(0,0,0,0.35);
+      background:linear-gradient(180deg, rgba(0,0,0,0.02), rgba(255,255,255,0.02));
     }
-    .small {font-size:13px;color:var(--muted);margin-top:12px;}
-    .error {display:none;color:#ffdddd;background:rgba(0,0,0,0.2);padding:8px;border-radius:8px;margin-top:12px;}
-    .spinner {
-      width:36px;height:36px;border-radius:50%;
-      border:4px solid rgba(255,255,255,0.12);
-      border-top-color:white;
-      animation:spin 1s linear infinite; margin:12px auto;
+
+    .fid-row{display:flex;align-items:center;gap:10px;margin-top:18px}
+    .fid-text{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
+      background:transparent;padding:8px 12px;border-radius:10px;border:1px dashed rgba(255,255,255,0.06);
+      font-weight:700;color:var(--white);min-width:160px;text-align:center;
     }
-    @keyframes spin {to {transform:rotate(360deg);}}
+    .btn{
+      padding:9px 14px;border-radius:10px;border:none;cursor:pointer;font-weight:700;
+      background:rgba(255,255,255,0.08);color:var(--white);
+    }
+    .btn:active{transform:translateY(1px)}
+
+    .muted{font-size:13px;color:var(--muted);margin-top:12px;text-align:center}
+    .spinner{width:36px;height:36px;border-radius:50%;border:4px solid rgba(255,255,255,0.12);border-top-color:rgba(255,255,255,0.95);animation:spin 1s linear infinite;margin:16px auto}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .notice{
+      margin-top:12px;padding:8px 12px;border-radius:10px;background:rgba(0,0,0,0.12);color:var(--muted);font-size:13px;text-align:center
+    }
+
+    @media (max-width:480px){
+      .avatar{width:96px;height:96px}
+      .fid-text{min-width:120px}
+    }
   </style>
 </head>
 
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="logo">
-        <img src="assets/icon-192.png" alt="">
+  <div class="wrap">
+    <div class="card" role="main" aria-labelledby="appTitle">
+      <div class="header">
+        <div class="logo"><img src="assets/icon-192.png" alt="logo"></div>
+        <div>
+          <div id="appTitle" class="title">Farcaster FID Checker</div>
+          <div class="subtitle">Automatically shows your Farcaster FID & profile photo</div>
+        </div>
       </div>
-      <div>
-        <div class="title">Farcaster FID Checker</div>
-        <div class="subtitle">Automatically shows your Farcaster FID & profile photo</div>
-      </div>
-    </div>
 
-    <div class="card" id="card">
-      <img id="avatar" src="assets/default-avatar.png" class="avatar">
-      <div class="fid-row">
-        <div class="fid-text" id="fid">—</div>
-        <button class="copy-btn" id="copyBtn">Copy</button>
+      <div class="content" id="card">
+        <img id="avatar" class="avatar" src="assets/default-avatar.png" alt="profile picture">
+        <div class="fid-row">
+          <div id="fid" class="fid-text">—</div>
+          <button id="copyBtn" class="btn">Copy</button>
+        </div>
+
+        <div id="status" class="muted">Detecting your Farcaster profile…</div>
+        <div id="spinner" class="spinner" aria-hidden="true"></div>
+        <div id="notice" class="notice" style="display:none"></div>
       </div>
-      <div class="small" id="status">Detecting your Farcaster profile…</div>
-      <div class="spinner" id="spinner"></div>
-      <div class="error" id="error"></div>
     </div>
   </div>
 
-<script type="module">
-const SDK_URL = "https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk/dist/miniapp-sdk.esm.js";
+  <script type="module">
+    // Final, defensive runtime for index.html
+    const SDK_URL = "https://cdn.jsdelivr.net/npm/@farcaster/miniapp-sdk/dist/miniapp-sdk.esm.js";
 
-const avatarEl = document.getElementById("avatar");
-const fidEl = document.getElementById("fid");
-const statusEl = document.getElementById("status");
-const spinner = document.getElementById("spinner");
-const errorEl = document.getElementById("error");
-const copyBtn = document.getElementById("copyBtn");
+    const avatarEl = document.getElementById('avatar');
+    const fidEl = document.getElementById('fid');
+    const statusEl = document.getElementById('status');
+    const spinner = document.getElementById('spinner');
+    const notice = document.getElementById('notice');
+    const copyBtn = document.getElementById('copyBtn');
+    const card = document.getElementById('card');
 
-function hideSpinner(){ spinner.style.display = "none"; }
-function showError(msg){
-  hideSpinner();
-  errorEl.style.display="block";
-  errorEl.textContent = msg;
-}
-
-async function loadSDK(){
-  try { return await import(SDK_URL); }
-  catch { return null; }
-}
-
-function setupCopy(fid){
-  copyBtn.onclick = async () => {
-    await navigator.clipboard.writeText(fid);
-    copyBtn.textContent = "Copied";
-    setTimeout(() => copyBtn.textContent = "Copy", 1200);
-  };
-}
-
-function renderUser(user){
-  hideSpinner();
-  const fid = user?.fid ?? user?.id ?? "unknown";
-  const avatar = user?.profile?.picture ?? user?.avatar ?? null;
-
-  fidEl.textContent = fid;
-  if(avatar) avatarEl.src = avatar;
-
-  statusEl.textContent = "You are signed in";
-  setupCopy(fid);
-}
-
-function renderLoginButton(auth){
-  hideSpinner();
-  statusEl.textContent = "Sign in required — tap to sign in";
-  const btn = document.createElement("button");
-  btn.className = "copy-btn";
-  btn.textContent = "Sign in with Farcaster";
-  btn.onclick = async () => {
-    try {
-      const user = await auth.login();
-      renderUser(user);
-    } catch(e){
-      showError("Sign in failed");
+    function hideSpinner(){ if(spinner) spinner.style.display = 'none'; }
+    function showSpinner(){ if(spinner) spinner.style.display = 'block'; }
+    function showNotice(msg){ notice.style.display = 'block'; notice.textContent = msg; }
+    function hideNotice(){ notice.style.display = 'none'; notice.textContent = ''; }
+    function showError(msg){
+      hideSpinner();
+      statusEl.textContent = msg;
+      showNotice(msg);
+      console.warn(msg);
     }
-  };
-  document.getElementById("card").appendChild(btn);
-}
 
-async function start(){
-  const sdk = await loadSDK();
-  if(!sdk) return showError("SDK unavailable — open inside a Farcaster client.");
+    async function loadSDK(){
+      try {
+        return await import(SDK_URL);
+      } catch (e) {
+        // SDK not available in regular browsers; not an error for deployment
+        return null;
+      }
+    }
 
-  sdk.ready?.();
+    function setupCopy(fidValue){
+      copyBtn.onclick = async () => {
+        try {
+          await navigator.clipboard.writeText(String(fidValue));
+          copyBtn.textContent = 'Copied';
+          setTimeout(()=> copyBtn.textContent = 'Copy', 1200);
+        } catch (e) {
+          console.warn('Clipboard failed', e);
+          copyBtn.textContent = 'Copy';
+        }
+      };
+    }
 
-  let user = null;
-  try { user = await sdk.auth?.getCurrentUser?.(); } catch{}
-  if(!user) try { user = await sdk.auth?.login?.({prompt:false}); } catch{}
+    // Render user object (common shape tolerant)
+    function renderUser(user){
+      hideSpinner();
+      hideNotice();
+      statusEl.textContent = 'You are signed in';
+      const fid = user?.fid ?? user?.userId ?? user?.id ?? 'unknown';
+      const avatar = user?.profile?.picture ?? user?.image ?? user?.avatar ?? user?.profilePicture ?? null;
+      fidEl.textContent = String(fid);
+      avatarEl.src = avatar ?? 'assets/default-avatar.png';
+      setupCopy(fid);
+    }
 
-  if(user) return renderUser(user);
+    // Render a login button when host supports auth but user not signed in
+    function renderLoginButton(auth){
+      hideSpinner();
+      statusEl.textContent = 'Sign in required — tap to sign in';
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = 'Sign in with Farcaster';
+      btn.style.marginTop = '12px';
+      btn.onclick = async () => {
+        try {
+          const user = await auth.login();
+          if(user) renderUser(user);
+        } catch (e) {
+          showError('Sign-in failed: ' + (e?.message || String(e)));
+        }
+      };
+      card.appendChild(btn);
+    }
 
-  const caps = await sdk.detectHostCapabilities?.();
-  if(caps?.auth) return renderLoginButton(sdk.auth);
+    /* ---------- Demo preview used for Warpcast web preview & browser QA ---------- */
+    const DEMO_USER = {
+      fid: "241470",
+      profile: { picture: "assets/default-avatar.png" }
+    };
 
-  showError("No user detected.");
-}
+    function renderDemoBadge(){
+      const badge = document.createElement('div');
+      badge.style.marginTop = '12px';
+      badge.style.fontSize = '12px';
+      badge.style.color = 'rgba(255,255,255,0.9)';
+      badge.textContent = 'Preview mode — open inside Farcaster app for real authentication';
+      card.appendChild(badge);
+    }
 
-window.onload = start;
-</script>
+    function renderDemo(){
+      renderUser(DEMO_USER);
+      renderDemoBadge();
+      statusEl.textContent = 'Preview (demo)';
+    }
 
+    /* ---------- Main start logic (defensive) ---------- */
+    async function start(){
+      showSpinner();
+      const urlParams = new URLSearchParams(window.location.search);
+      const forcePreview = urlParams.get('preview') === 'true';
+
+      const sdk = await loadSDK();
+
+      // If preview forced or SDK not injected, show demo preview to avoid empty spinner
+      if(forcePreview || !sdk){
+        // quick timeout to mimic natural loading
+        setTimeout(()=>{
+          hideSpinner();
+          renderDemo();
+        }, 500);
+        if(!sdk) console.info('Farcaster Mini App SDK not found — running demo preview in browser.');
+        return;
+      }
+
+      // When inside real Farcaster client (SDK injected)
+      try {
+        sdk.ready?.();
+      } catch (e) {
+        console.warn('ready() failed or not required', e);
+      }
+
+      try {
+        // Try non-interactive current user fetch
+        let user = null;
+        if(typeof sdk.auth?.getCurrentUser === 'function'){
+          try { user = await sdk.auth.getCurrentUser(); } catch(e){ /* ignore */ }
+        }
+
+        // Fallback to silent login (may fail without gesture)
+        if(!user && typeof sdk.auth?.login === 'function'){
+          try { user = await sdk.auth.login({ prompt:false }); } catch(e){ /* ignore */ }
+        }
+
+        // If still no user, detect capabilities and show login button if available
+        if(!user && typeof sdk.detectHostCapabilities === 'function'){
+          const caps = await sdk.detectHostCapabilities();
+          if(caps?.auth && typeof sdk.auth?.login === 'function'){
+            renderLoginButton(sdk.auth);
+            return;
+          }
+        }
+
+        if(user){
+          renderUser(user);
+        } else {
+          showError('No Farcaster user detected. Open this Mini App inside a Farcaster client to authenticate.');
+        }
+      } catch (err) {
+        console.error(err);
+        showError('Unexpected error: ' + (err?.message || String(err)));
+      }
+    }
+
+    // Start on load
+    window.addEventListener('load', start);
+  </script>
 </body>
 </html>
