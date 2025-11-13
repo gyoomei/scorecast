@@ -1,36 +1,21 @@
 {
-  "manifest_version": 1,
-  "name": "ScoreCast",
-  "short_name": "ScoreCast",
-  "slug": "scorecast",
-  "version": "1.0.0",
-  "home_url": "https://scorecast-beryl.vercel.app/",
-  "start_url": "https://scorecast-beryl.vercel.app/",
-  "description": "Instantly check your FID & Neynar score.",
-  "categories": ["utilities", "social"],
-  "tags": ["fid", "neynar", "score", "farcaster", "identity"],
-  "icons": {
-    "128": "https://scorecast-beryl.vercel.app/assets/icon-128.png",
-    "192": "https://scorecast-beryl.vercel.app/assets/icon-192.png",
-    "512": "https://scorecast-beryl.vercel.app/assets/icon-512.png"
+  "version": "1",
+  "name": "FID Checker",
+  "slug": "fid-checker",
+  "description": "Mini app that shows visitor's Farcaster FID and profile photo.",
+  "homeURL": "https://your-domain.example/",
+  "icon": "https://your-domain.example/assets/icon-192.png",
+  "backgroundColor": "#6F42C1",
+  "splash": {
+    "icon": "https://your-domain.example/assets/splash-icon.png",
+    "backgroundColor": "#6F42C1"
   },
-  "icons_maskable": true,
-  "capabilities": ["auth", "wallet", "share", "notifications"],
-  "permissions": ["readProfile", "copyToClipboard"],
-  "languages": ["en", "id"],
-  "display": "standalone",
-  "background_color": "#6F47FF",
-  "theme_color": "#6F47FF",
-
-  "accountAssociation": {
-    "header": "eyJmaWQiOjI0MTQ3MCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDkyQzgyNTIwOTA3YjZDZmU2MUUzNjNmZTBFOWY2QjdjODJmQzdENTkifQ",
-    "payload": "eyJkb21haW4iOiJzY29yZWNhc3QtYmVyeWwudmVyY2VsLmFwcCJ9",
-    "signature": "NdG0M9tmZpAJ2jAQ9WEdviSb07Pfid9OLHQPaAWCwk92LOSDBVazppmpLF769G/7uOAoOvPiCmPOSbpI2+WyTRw="
-  },
-
   "developer": {
-    "name": "Ilyas",
-    "url": "https://scorecast-beryl.vercel.app/",
-    "email": "you@example.com"
-  }
+    "name": "forger",
+    "url": ""
+  },
+  "capabilities": [
+    "auth"
+  ],
+  "versionCode": "0.1.0"
 }
