@@ -1,3 +1,8 @@
+"accountAssociation": {
+    "header": "eyJmaWQiOjI0MTQ3MCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDkyQzgyNTIwOTA3YjZDZmU2MUUzNjNmZTBFOWY2QjdjODJmQzdENTkifQ",
+    "payload": "eyJkb21haW4iOiJmaWRjaGVja2VyLnBhZ2VzLmRldiJ9",
+    "signature": "0Uuz4g4Df36kBQ6woFO9y7bfBIVX2HnbZmICCbLB4v5PDlLlOWlWCNMc967yAkwJjhCs4zdJGJ62hLfkoa3YrRw="
+  },
 "miniapp": {
   "version": "1",
   "name": "FID Checker",
