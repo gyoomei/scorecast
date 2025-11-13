@@ -1,0 +1,29 @@
+{
+  "manifest_version": 1,
+  "name": "ScoreCast",
+  "short_name": "ScoreCast",
+  "slug": "scorecast",
+  "version": "1.0.0",
+  "homeUrl": "https://scorecast.example.com/",
+  "startUrl": "https://scorecast.example.com/",
+  "description": "Instantly check your FID & Neynar score.",
+  "categories": ["utilities", "social"],
+  "tags": ["fid", "neynar", "score", "farcaster", "identity"],
+  "icons": {
+    "128": "https://scorecast.example.com/assets/icon-128.png",
+    "192": "https://scorecast.example.com/assets/icon-192.png",
+    "512": "https://scorecast.example.com/assets/icon-512.png"
+  },
+  "icons_maskable": true,
+  "capabilities": ["auth", "wallet", "share", "notifications"],
+  "permissions": ["readProfile", "copyToClipboard"],
+  "languages": ["en", "id"],
+  "display": "standalone",
+  "background_color": "#6F47FF",
+  "theme_color": "#6F47FF",
+  "developer": {
+    "name": "Your Name",
+    "url": "https://example.com",
+    "email": "you@example.com"
+  }
+}
