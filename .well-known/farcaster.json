@@ -1,23 +1,14 @@
-{
-  "accountAssociation": {
-    "header": "eyJmaWQiOjI0MTQ3MCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDkyQzgyNTIwOTA3YjZDZmU2MUUzNjNmZTBFOWY2QjdjODJmQzdENTkifQ",
-    "payload": "eyJkb21haW4iOiJmaWRjaGVja2VyLnBhZ2VzLmRldiJ9",
-    "signature": "0Uuz4g4Df36kBQ6woFO9y7bfBIVX2HnbZmICCbLB4v5PDlLlOWlWCNMc967yAkwJjhCs4zdJGJ62hLfkoa3YrRw="
-  },
-  "miniapp": {
-    "version": "1",
-    "name": "FID Checker",
-    "iconUrl": "https://fidchecker.pages.dev/assets/icon-192.png",
-    "homeUrl": "https://fidchecker.pages.dev/",
-    "splashImageUrl": "https://fidchecker.pages.dev/assets/splash.png",
-    "splashBackgroundColor": "#6F42C1",
-
-    "subtitle": "Instantly view your Farcaster ID",
-    "description": "Automatically shows your Farcaster FID and profile photo when you open the Mini App.",
-    "primaryCategory": "social",
-
-    "ogTitle": "FID Checker",
-    "ogDescription": "Instant FID & profile preview.",
-    "ogImageUrl": "https://fidchecker.pages.dev/assets/icon-192.png"
-  }
+"miniapp": {
+  "version": "1",
+  "name": "FID Checker",
+  "iconUrl": "https://fidchecker.pages.dev/assets/icon-1024.png",
+  "homeUrl": "https://fidchecker.pages.dev/",
+  "splashImageUrl": "https://fidchecker.pages.dev/assets/splash-200.png",
+  "splashBackgroundColor": "#6F42C1",
+  "subtitle": "View your Farcaster ID",
+  "description": "Automatically shows your Farcaster FID and profile photo when you open the Mini App.",
+  "primaryCategory": "social",
+  "ogTitle": "FID Checker",
+  "ogDescription": "Instant FID and profile preview.",
+  "ogImageUrl": "https://fidchecker.pages.dev/assets/icon-1024.png"
 }
