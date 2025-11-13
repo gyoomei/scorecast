@@ -3,20 +3,20 @@
   "name": "FID Checker",
   "slug": "fid-checker",
   "description": "Mini app that shows visitor's Farcaster FID and profile photo.",
-  "homeURL": "https://scorecast-beryl.vercel.app/",
-  "icon": "https://scorecast-beryl.vercel.app/assets/icon-192.png",
+  "homeURL": "https://fidchecker.pages.dev/",
+  "icon": "https://fidchecker.pages.dev/assets/icon-192.png",
   "backgroundColor": "#6F42C1",
   "splash": {
-    "icon": "https://scorecast-beryl.vercel.app/assets/splash-icon.png",
+    "icon": "https://fidchecker.pages.dev/assets/splash-icon.png",
     "backgroundColor": "#6F42C1"
   },
   "accountAssociation": {
-    "header": "...",
-    "payload": "...",
-    "signature": "..."
+    "header": "eyJmaWQiOjI0MTQ3MCwidHlwZSI6ImF1dGgiLCJrZXkiOiIweDkyQzgyNTIwOTA3YjZDZmU2MUUzNjNmZTBFOWY2QjdjODJmQzdENTkifQ",
+    "payload": "eyJkb21haW4iOiJmaWRjaGVja2VyLnBhZ2VzLmRldiJ9",
+    "signature": "0Uuz4g4Df36kBQ6woFO9y7bfBIVX2HnbZmICCbLB4v5PDlLlOWlWCNMc967yAkwJjhCs4zdJGJ62hLfkoa3YrRw="
   },
   "developer": {
-    "name": "Ilyas",
+    "name": "forger",
     "url": ""
   },
   "capabilities": ["auth"],
